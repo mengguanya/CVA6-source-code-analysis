@@ -165,7 +165,9 @@ typedef enum logic [2:0] {
 } cf_t;		
 ```
 
-# 1.2  bht.sv
+
+
+# 2  bht.sv
 
 
 
