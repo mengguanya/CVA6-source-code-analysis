@@ -1,16 +1,14 @@
-## frondend.sv
+# 1 frondend.sv
 
-cva6源码解析一共有XX个文档，这是第1个文档。
-
-## 1  交互端口（顶层封装）
+## 1.1  交互端口（顶层封装）
 
 分析交互端口之前，我们首先需要明确的前端的主要任务，即包括：***确定取指地址***（包括分支预测，接收中断等信号）、***访问cache取指***、***发送指令到指令队列***以供处理器后端使用等三个部分。
 
-### 1.1  确定取值地址
+### 1.1.1  确定取值地址
 
 取值地址的来源有7个，除了默认PC+4和由前端内部产生的分支预测之外，还有来自其他模块的信号包括：分支预测失败、函数返回、例外/中断、刷新流水线、debug。
 
-#### 1.1.1  分支预测失败
+#### 1.1.1.1  分支预测失败
 
 分支预测结果信号（resolved_branch_i）来源于控制器（controller），而它是执行阶段产生，传输到控制器的。当分支预测结果为失败也就是（resolved_branch_i.is_mispredict == true）时，会发生取值地址的改变，并更新BTB表（分支历史表）。
 
@@ -36,7 +34,7 @@ typedef struct packed {
 } bp_resolve_t;
 ```
 
-#### 1.1.2  刷新流水线
+#### 1.1.1.2  刷新流水线
 
 刷新流水线的信号来自于提交阶段（commit）。包括是否刷新和刷新后的PC。刷新流水线信号的原因是是CSR寄存器的改变。
 
@@ -46,7 +44,7 @@ typedef struct packed {
     input  logic [riscv::VLEN-1:0] pc_commit_i,        // PC of instruction in commit stage
 ```
 
-#### 1.1.3  环境调用返回（return from environment call）
+#### 1.1.1.3  环境调用返回（return from environment call）
 
 进程通过ECALL指令向执行环境（通常是操作系统）发起系统函数调用请求，并执行完成之后，返回。
 
@@ -56,7 +54,7 @@ typedef struct packed {
     input  logic               eret_i,             // return from exception
 ```
 
-#### 1.1.4  例外/中断
+#### 1.1.1.4  例外/中断
 
 发生中断之后，设置中断向量。
 
@@ -64,13 +62,13 @@ typedef struct packed {
 input  logic [riscv::VLEN-1:0] trap_vector_base_i, // base of trap vector
 ```
 
-#### 1.1.5  debug
+#### 1.1.1.5  debug
 
 ```
 input  logic               set_debug_pc_i,     // jump to debug address
 ```
 
-### 1.2   访问cache
+### 1.1.2   访问cache
 
 前端的cache交互部分被封装成了两个独立的接口，非常简洁。我们可以从ariane_pkg.sv文件中找到关于这两个接口的定义。
 
@@ -120,7 +118,7 @@ typedef struct packed {
 } exception_t;
 ```
 
-### 1.3  发送指令到指令队列
+### 1.1.3  发送指令到指令队列
 
 前端发送到译码阶段的信息包括译码所需信息及其有效信号、译码阶段的响应确认信号。在ariane_pkg.sv中可以发现关于译码所需信号的封装。
 
@@ -167,4 +165,9 @@ typedef enum logic [2:0] {
 } cf_t;		
 ```
 
-2  
+# 1.2  bht.sv
+
+
+
+
+
