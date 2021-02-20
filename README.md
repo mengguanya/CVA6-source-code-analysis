@@ -16,4 +16,4 @@ CVA6是一款使用System Verilog编写的基于RISC-V指令集架构的六级�
 
 把文件在VIVADO 2020中打开可以观察到文件（模块）之间的调用关系。
 
-![image-20210220211916924](C:\Users\guany\AppData\Roaming\Typora\typora-user-images\image-20210220211916924.png)
+![image-20210220211916924](D:\DesktopImage\MPRC\E-core\CVA6-source-code-analysis\image\ariane.png)
