@@ -1,5 +1,55 @@
 # instr_queue.sv
 
+instr_queue.sv 是衔接前端和译码（decode）阶段的部件，其支持前端分支预测，并且这个queue只保留有效的指令。
+
+## 1.1  交互端口（顶层封装）
+
+指令队列是衔接前端和后端的部件，其与前端有交互。首先，ready_o信号是传递给前端的准备信号，consumed_o信号是传递给前端的用于标志分支预测的指令是否已经传递到后端（译码阶段）。
+
+```
+  output logic                                               ready_o,
+  output logic [ariane_pkg::INSTR_PER_FETCH-1:0]             consumed_o,
+```
+
+例外信号，只可能是页表错误信号。因为前面已经对其他例外做了处理。
+
+```
+  // we've encountered an exception, at this point the only possible exceptions are page-table faults
+  input  ariane_pkg::frontend_exception_t                    exception_i,
+  input  logic [riscv::VLEN-1:0]                             exception_addr_i,
+```
+
+前端传递过来的分支预测信号。
+
+```
+  // branch predict
+  input  logic [riscv::VLEN-1:0]                             predict_address_i,
+  input  ariane_pkg::cf_t  [ariane_pkg::INSTR_PER_FETCH-1:0] cf_type_i,
+```
+
+队列满导致指令无法写入，需要前端重新取值。
+
+```
+  // replay instruction because one of the FIFO was already full
+  output logic                                               replay_o,
+  output logic [riscv::VLEN-1:0]                             replay_addr_o, // address at which to replay this instruction
+```
+
+把前端的所有信号传递到后端，包括指令、地址、有效信号、分支预测，这些都定义在fetch_entry_o中。
+
+```
+  // to processor backend
+  output ariane_pkg::fetch_entry_t                           fetch_entry_o,
+  output logic                                               fetch_entry_valid_o,
+  input  logic                                               fetch_entry_ready_i
+```
+
+## 1.2  内部信号
+
+
+
+## 1.3  信号传递
+
 在此，例化了lzc模块。lzc模块是common cell库中定义的，主要作用是实现前导零和后补零的计数。
 
 ```
